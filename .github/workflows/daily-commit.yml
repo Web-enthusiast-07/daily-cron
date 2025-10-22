@@ -1,0 +1,52 @@
+name: Daily GitHub Activity
+
+on:
+  schedule:
+    # Base times - each run adds 0-120 min random delay for truly random timing
+    - cron: '0 6 * * *'   # Early morning window: 6:00-8:00 AM UTC
+    - cron: '0 10 * * *'  # Late morning window: 10:00 AM-12:00 PM UTC
+    - cron: '0 14 * * *'  # Afternoon window: 2:00-4:00 PM UTC
+    - cron: '0 18 * * *'  # Evening window: 6:00-8:00 PM UTC
+  workflow_dispatch:  # Allow manual triggering for testing
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Random delay to avoid exact timing
+        run: |
+          # Sleep for a random time between 0-120 minutes (0-2 hours)
+          DELAY=$((RANDOM % 7200))
+          echo "Sleeping for $DELAY seconds to randomize execution time..."
+          sleep $DELAY
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Run daily commit script
+        run: python3 daily_commit.py --no-push
+
+      - name: Push changes (if any commits were made)
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "No changes to push"
+          else
+            git push
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
