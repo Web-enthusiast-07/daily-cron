@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Daily GitHub Commit Script
-Runs 4 times per day, creating 0-2 commits each run (0-8 total per day).
-Commits are naturally spread throughout the day for realistic activity.
+Runs 8 times per day (every ~3 hours), creating 0-2 commits each run.
+With adjusted weights, averages ~3-4 commits per day for realistic activity.
 """
 
 import argparse
@@ -20,14 +20,17 @@ class DailyCommitter:
 
     def get_s_curve_commits(self):
         """
-        Generate random number of commits (0-2) using S-curve distribution.
-        Middle value (1) is most likely, edges (0, 2) are less likely.
+        Generate random number of commits (0-2) using weighted distribution.
 
-        Since the workflow runs 4 times per day, this gives 0-8 commits total per day.
+        Since the workflow runs 8 times per day with these weights:
+        - 60% chance of 0 commits (most runs do nothing)
+        - 35% chance of 1 commit (occasionally active)
+        - 5% chance of 2 commits (rare bursts)
+
+        Expected: ~3-4 commits per day (0.45 commits/run * 8 runs)
         """
-        # Weights for 0-2 commits following a bell curve pattern
-        # Peak at 1, lower at extremes
-        weights = [20, 50, 30]  # 0, 1, 2 commits
+        # Weights adjusted for 8 runs per day to avoid too many commits
+        weights = [60, 35, 5]  # 0, 1, 2 commits
 
         # Use weighted random choice
         commits = random.choices(range(3), weights=weights, k=1)[0]

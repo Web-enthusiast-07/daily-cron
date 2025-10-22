@@ -1,37 +1,45 @@
 # gitfinity
 
-Automated daily GitHub activity generator that creates 0-8 random commits per day to maintain your GitHub contribution graph.
+Automated daily GitHub activity generator that creates ~3-4 random commits per day to maintain your GitHub contribution graph.
 
 ## Features
 
-- **Truly random timing**: Each of the 4 daily runs adds a 0-120 minute random delay, so commits never happen at predictable times
-- **Natural spread**: Commits distributed across morning, late morning, afternoon, and evening windows
-- **Smart commit distribution**: Uses S-curve algorithm where 1 commit per run is most likely, 0 and 2 are less likely
-- **Realistic patterns**: Commits appear throughout the day at unpredictable intervals
+- **Truly random timing**: 8 scheduled runs per day with 0-15 minute random delays for unpredictable commit times
+- **Natural spread**: Commits distributed every ~3 hours throughout the entire day (0:00, 3:00, 6:00, 9:00, 12:00, 15:00, 18:00, 21:00 UTC)
+- **Smart commit distribution**: Uses weighted algorithm where most runs create 0 commits, some create 1, rarely 2
+- **Efficient execution**: Short delays (0-15 min) don't waste GitHub Actions time limits
+- **Realistic patterns**: Averages ~3-4 commits per day with natural variation
 - **Automatic log management**: Keeps only the last 100 lines to prevent file bloat
 - **Fully automated**: Uses GitHub Actions (no server required, no costs)
 - **Simple activity logging**: Tracks timestamps in activity.log
 
 ## How It Works
 
-The program uses GitHub Actions workflows that run **4 times per day** with **randomized timing**:
-- 🌅 Early morning: anywhere between 6:00-8:00 AM UTC
-- ☕ Late morning: anywhere between 10:00 AM-12:00 PM UTC
-- 🌞 Afternoon: anywhere between 2:00-4:00 PM UTC
-- 🌆 Evening: anywhere between 6:00-8:00 PM UTC
+The program uses GitHub Actions workflows that run **8 times per day** (every ~3 hours):
+- 🌙 Midnight: 0:00 UTC (± 0-15 min)
+- 🌃 Late night: 3:00 UTC (± 0-15 min)
+- 🌅 Early morning: 6:00 UTC (± 0-15 min)
+- ☕ Morning: 9:00 UTC (± 0-15 min)
+- 🌞 Noon: 12:00 UTC (± 0-15 min)
+- 🌤️ Afternoon: 15:00 UTC (± 0-15 min)
+- 🌆 Evening: 18:00 UTC (± 0-15 min)
+- 🌇 Night: 21:00 UTC (± 0-15 min)
 
-Each run adds a random 0-120 minute delay before executing, ensuring commits happen at unpredictable times!
+Each run adds a random 0-15 minute delay before executing, adding natural variation without wasting GitHub Actions time!
 
 Each run then executes a Python script that:
 
-1. Uses S-curve distribution to select 0-2 commits (favoring 1 commit)
+1. Uses weighted distribution to select 0-2 commits:
+   - 60% chance: 0 commits (most runs do nothing)
+   - 35% chance: 1 commit (occasional activity)
+   - 5% chance: 2 commits (rare bursts)
 2. For each commit:
    - Updates the `activity.log` file with a timestamp
    - Creates a git commit
 3. Automatically truncates the log file to 100 lines to prevent bloat
 4. Pushes all commits to GitHub
 
-**Result:** 0-8 commits per day, naturally spread throughout 24 hours!
+**Result:** ~3-4 commits per day on average, naturally spread throughout 24 hours!
 
 ## Setup
 
@@ -75,14 +83,20 @@ Each run then executes a Python script that:
 
 #### Customize the schedule
 
-Edit `.github/workflows/daily-commit.yml` lines 6-9:
+Edit `.github/workflows/daily-commit.yml` lines 7-14:
 ```yaml
-- cron: '0 6 * * *'   # Early morning window: 6:00-8:00 AM UTC
-- cron: '0 10 * * *'  # Late morning window: 10:00 AM-12:00 PM UTC
-- cron: '0 14 * * *'  # Afternoon window: 2:00-4:00 PM UTC
-- cron: '0 18 * * *'  # Evening window: 6:00-8:00 PM UTC
+- cron: '0 0 * * *'   # 12:00 AM UTC
+- cron: '0 3 * * *'   # 3:00 AM UTC
+- cron: '0 6 * * *'   # 6:00 AM UTC
+- cron: '0 9 * * *'   # 9:00 AM UTC
+- cron: '0 12 * * *'  # 12:00 PM UTC
+- cron: '0 15 * * *'  # 3:00 PM UTC
+- cron: '0 18 * * *'  # 6:00 PM UTC
+- cron: '0 21 * * *'  # 9:00 PM UTC
 ```
-You can add/remove runs or change the base times. Use [crontab.guru](https://crontab.guru/) for help.
+You can add/remove runs or change the times. Use [crontab.guru](https://crontab.guru/) for help.
+
+**Note:** If you reduce the number of scheduled runs, consider adjusting the commit weights in `daily_commit.py` to maintain desired daily commit counts.
 
 ## Usage
 
@@ -112,22 +126,23 @@ python3 daily_commit.py --no-push
 
 ### Change random delay window
 
-Edit `.github/workflows/daily-commit.yml` line 22:
+Edit `.github/workflows/daily-commit.yml` line 27:
 ```bash
-DELAY=$((RANDOM % 7200))  # 7200 seconds = 120 minutes = 2 hours
+DELAY=$((RANDOM % 900))  # 900 seconds = 15 minutes
 ```
-Change `7200` to adjust the randomization window:
-- `3600` = 0-60 minutes (1 hour window)
-- `7200` = 0-120 minutes (2 hour window) ⭐ Default
-- `10800` = 0-180 minutes (3 hour window)
+Change `900` to adjust the randomization window:
+- `300` = 0-5 minutes
+- `600` = 0-10 minutes
+- `900` = 0-15 minutes ⭐ Default
+- `1800` = 0-30 minutes
 
 ### Change commit distribution per run
 
-Edit `daily_commit.py` around line 30 in the `get_s_curve_commits()` method:
+Edit `daily_commit.py` around line 33 in the `get_s_curve_commits()` method:
 ```python
-weights = [20, 50, 30]  # 0, 1, 2 commits per run
+weights = [60, 35, 5]  # 0, 1, 2 commits per run
 ```
-Higher numbers = more likely. Example: `[10, 80, 10]` makes 1 commit much more likely.
+Higher numbers = more likely. Example: `[50, 45, 5]` makes commits slightly more frequent.
 
 ### Change maximum commits per run
 
