@@ -41,9 +41,13 @@ Each run then executes a Python script that:
 
 **Result:** ~3-4 commits per day on average, naturally spread throughout 24 hours!
 
+## Requirements
+
+Just a GitHub account! Everything else runs in GitHub Actions (no installation, no server, no costs).
+
 ## Setup
 
-### Quick Start (For Forked Repositories)
+**Quick Start:**
 
 1. **Fork this repository** to your GitHub account
    - Click the "Fork" button at the top right of this page
@@ -98,16 +102,9 @@ You can add/remove runs or change the times. Use [crontab.guru](https://crontab.
 
 **Note:** If you reduce the number of scheduled runs, consider adjusting the commit weights in `daily_commit.py` to maintain desired daily commit counts.
 
-## Usage
+**Manual Testing (Optional):**
 
-### Automated (GitHub Actions)
-
-Once set up, the workflow runs automatically daily. No action needed!
-
-### Manual Execution
-
-You can run the script locally:
-
+You can test the script locally:
 ```bash
 # Run with automatic push
 python3 daily_commit.py
@@ -115,12 +112,6 @@ python3 daily_commit.py
 # Run without pushing (commits only)
 python3 daily_commit.py --no-push
 ```
-
-## Files
-
-- `daily_commit.py` - Main Python script that creates commits
-- `activity.log` - File that tracks all activity timestamps
-- `.github/workflows/daily-commit.yml` - GitHub Actions workflow configuration
 
 ## Customization
 
@@ -171,31 +162,29 @@ commit_message = f"Daily activity update #{commit_number} - {timestamp}"
 With the default settings:
 
 **Per run (0-2 commits):**
-- 0 commits: 20% chance
-- 1 commit: 50% chance ⭐ Most likely
-- 2 commits: 30% chance
+- 0 commits: 60% chance (most runs do nothing)
+- 1 commit: 35% chance ⭐ Occasional activity
+- 2 commits: 5% chance (rare bursts)
 
-**Per day (4 runs):**
-- Expected average: ~4-5 commits per day
+**Per day (8 runs):**
+- Expected average: ~3-4 commits per day
 - Minimum: 0 commits (all runs skip)
-- Maximum: 8 commits (all runs create 2)
-- Timing: Random within 4 different 2-hour windows throughout the day
+- Maximum: 16 commits (all runs create 2 - very unlikely!)
+- Timing: Random within eight 15-minute windows spread across 24 hours
 
 **Example day:**
 ```
-6:47 AM  → 1 commit
-11:23 AM → 2 commits
-2:08 PM  → 0 commits (skipped)
-7:34 PM  → 1 commit
+0:08 AM  → 0 commits (skipped)
+3:12 AM  → 1 commit
+6:02 AM  → 0 commits (skipped)
+9:14 AM  → 0 commits (skipped)
+12:05 PM → 1 commit
+3:11 PM  → 0 commits (skipped)
+6:09 PM  → 2 commits (rare!)
+9:03 PM  → 1 commit
 
-Total: 4 commits at unpredictable times!
+Total: 5 commits at unpredictable times!
 ```
-
-## Requirements
-
-- Python 3.x (included in GitHub Actions)
-- Git (included in GitHub Actions)
-- A GitHub repository with Actions enabled
 
 ## License
 
@@ -207,8 +196,9 @@ This is meant for maintaining GitHub activity and learning automation. The commi
 
 **Realism features:**
 - ✅ Commits happen at random times (not predictable patterns)
-- ✅ Distributed across 4 different time windows per day
-- ✅ Variable commit count using S-curve distribution
+- ✅ Distributed across 8 time windows throughout the day
+- ✅ Variable commit count using weighted distribution
+- ✅ Efficient execution (0-15 min delays)
 - ✅ Automatic log file management
 
 The randomization ensures your activity looks natural and human-like!
