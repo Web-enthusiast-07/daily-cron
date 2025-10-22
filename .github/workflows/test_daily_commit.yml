@@ -1,0 +1,51 @@
+name: Daily GitHub Activity
+
+on:
+  schedule:
+    # 8 schedules throughout the day (every ~3 hours) for natural distribution
+    # GitHub Actions adds natural jitter, so actual times will vary slightly
+    - cron: '0 0 * * *'   # 12:00 AM UTC
+    - cron: '0 3 * * *'   # 3:00 AM UTC
+    - cron: '0 6 * * *'   # 6:00 AM UTC
+    - cron: '0 9 * * *'   # 9:00 AM UTC
+    - cron: '0 12 * * *'  # 12:00 PM UTC
+    - cron: '0 15 * * *'  # 3:00 PM UTC
+    - cron: '0 18 * * *'  # 6:00 PM UTC
+    - cron: '0 21 * * *'  # 9:00 PM UTC
+  workflow_dispatch:  # Allow manual triggering for testing
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Configure Git
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+
+      - name: Run daily commit script
+        run: python3 daily_commit.py --test --no-push
+
+      - name: Push changes (if any commits were made)
+        run: |
+          if [ -z "$(git log origin/main..HEAD)" ]; then
+            echo "No commits to push"
+          else
+            echo "Pushing commits to remote..."
+            git push
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
