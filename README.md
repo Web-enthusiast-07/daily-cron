@@ -35,22 +35,54 @@ Each run then executes a Python script that:
 
 ## Setup
 
-1. **Clone this repository** to your GitHub account (or use this one)
+### Quick Start (For Forked Repositories)
+
+1. **Fork this repository** to your GitHub account
+   - Click the "Fork" button at the top right of this page
 
 2. **Enable GitHub Actions**:
-   - Go to your repository on GitHub
-   - Click on the "Actions" tab
-   - If prompted, enable GitHub Actions for this repository
+   - Go to your forked repository on GitHub
+   - Click the "Actions" tab
+   - Click the green "I understand my workflows, go ahead and enable them" button
 
-3. **Configure the schedule** (optional):
-   - Edit `.github/workflows/daily-commit.yml`
-   - Modify the cron schedule: `'0 10 * * *'` (currently set to 10:00 AM UTC)
-   - You can use [crontab.guru](https://crontab.guru/) to help create your schedule
+3. **Configure workflow permissions**:
+   - Go to **Settings** → **Actions** → **General**
+   - Scroll down to **Workflow permissions**
+   - Select **"Read and write permissions"**
+   - Check **"Allow GitHub Actions to create and approve pull requests"** (optional)
+   - Click **Save**
 
-4. **Test it manually**:
-   - Go to Actions tab → "Daily GitHub Activity" workflow
-   - Click "Run workflow" → "Run workflow"
-   - Watch it create commits!
+4. **Activate scheduled workflows** (Important!):
+
+   GitHub disables scheduled workflows in forks by default. To activate them:
+
+   **Option A - Trigger manually (Recommended):**
+   - Go to **Actions** tab → **"Daily GitHub Activity"** workflow
+   - Click **"Enable workflow"** if prompted
+   - Click **"Run workflow"** → **"Run workflow"** button
+   - This activates the schedule for future automatic runs
+
+   **Option B - Make any commit:**
+   - Edit any file (like this README) and commit
+   - This will activate all workflows including the schedule
+
+5. **Verify it's working**:
+   - Check the **Actions** tab for successful workflow runs
+   - Look for new commits appearing in `activity.log`
+   - Check your contribution graph (may take a few minutes to update)
+
+### Advanced Configuration (Optional)
+
+#### Customize the schedule
+
+Edit `.github/workflows/daily-commit.yml` lines 6-9:
+```yaml
+- cron: '0 6 * * *'   # Early morning window: 6:00-8:00 AM UTC
+- cron: '0 10 * * *'  # Late morning window: 10:00 AM-12:00 PM UTC
+- cron: '0 14 * * *'  # Afternoon window: 2:00-4:00 PM UTC
+- cron: '0 18 * * *'  # Evening window: 6:00-8:00 PM UTC
+```
+You can add/remove runs or change the base times. Use [crontab.guru](https://crontab.guru/) for help.
 
 ## Usage
 
@@ -88,17 +120,6 @@ Change `7200` to adjust the randomization window:
 - `3600` = 0-60 minutes (1 hour window)
 - `7200` = 0-120 minutes (2 hour window) ⭐ Default
 - `10800` = 0-180 minutes (3 hour window)
-
-### Change workflow base times
-
-Edit `.github/workflows/daily-commit.yml` lines 6-9:
-```yaml
-- cron: '0 6 * * *'   # Early morning base time
-- cron: '0 10 * * *'  # Late morning base time
-- cron: '0 14 * * *'  # Afternoon base time
-- cron: '0 18 * * *'  # Evening base time
-```
-You can add/remove runs or change the base times. Use [crontab.guru](https://crontab.guru/) for help.
 
 ### Change commit distribution per run
 
