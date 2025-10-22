@@ -1,6 +1,8 @@
 name: Daily GitHub Activity
 
 on:
+  push:  # Temporary: helps GitHub recognize the workflow
+    branches: [ main ]
   schedule:
     # Base times - each run adds 0-120 min random delay for truly random timing
     - cron: '0 6 * * *'   # Early morning window: 6:00-8:00 AM UTC
@@ -43,7 +45,7 @@ jobs:
 
       - name: Push changes (if any commits were made)
         run: |
-          if [ -n "$(git status --porcelain)" ]; then
+          if [ -z "$(git status --porcelain)" ]; then
             echo "No changes to push"
           else
             git push
