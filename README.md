@@ -1,6 +1,14 @@
 # gitfinity
 
-Automated daily GitHub activity generator that creates ~3-4 random commits per day to maintain your GitHub contribution graph.
+**Give your GitHub graph the love your side projects never got.**
+
+Keep your graph glowing while you're binging Netflix.
+
+gitfinity is your fully automated GitHub activity generator creating ~3-4 random commits per day so your contribution graph stays alive, consistent, and effortlessly green.
+
+**No burnout. No fake projects. Just beautiful green squares.**
+
+![Linus Torvalds contribution graph](torvaldd.png)
 
 ## Features
 
@@ -47,45 +55,15 @@ Just a GitHub account! Everything else runs in GitHub Actions (no installation, 
 
 ## Setup
 
-**Quick Start:**
+1. **Fork this repository**
+   - Click the "Fork" button at the top right of this page
 
-1. **Use this repository as a template** (⚠️ **IMPORTANT**: Do NOT fork!)
-   - Click the green **"Use this template"** button at the top right of this page
-   - Select **"Create a new repository"**
-   - Choose a name for your repository (e.g., `my-github-activity`)
-   - Make sure it's set to **Public** (required for contribution graph)
-   - Click **"Create repository"**
-
-   **Why not fork?** Commits in forked repositories don't count toward your GitHub contribution graph!
-
-2. **Enable GitHub Actions**:
-   - Go to your new repository on GitHub
+2. **Enable the "Daily GitHub Activity" action**
+   - Go to your forked repository
    - Click the "Actions" tab
-   - Click the green "I understand my workflows, go ahead and enable them" button (if prompted)
+   - Enable the "Daily GitHub Activity" workflow
 
-3. **Configure workflow permissions**:
-   - Go to **Settings** → **Actions** → **General**
-   - Scroll down to **Workflow permissions**
-   - Select **"Read and write permissions"**
-   - Check **"Allow GitHub Actions to create and approve pull requests"** (optional)
-   - Click **Save**
-
-4. **Activate the workflow**:
-
-   - Go to **Actions** tab → **"Daily GitHub Activity"** workflow
-   - Click **"Run workflow"** → **"Run workflow"** button to test it immediately
-   - The scheduled runs will start automatically after the first manual run
-
-5. **Verify it's working**:
-   - Check the **Actions** tab for successful workflow runs
-   - Look for new commits appearing in `activity.log`
-   - Check your contribution graph after 24 hours (GitHub may take time to update)
-
-**✅ Why commits will count:**
-- Commits use your GitHub noreply email (automatically configured)
-- Repository created from template (not a fork)
-- Commits made to default branch (main)
-- Repository is public
+That's it! The workflow will run automatically on schedule.
 
 ### Advanced Configuration (Optional)
 
@@ -211,7 +189,6 @@ This is meant for maintaining GitHub activity and learning automation. The commi
 **Contribution graph requirements:**
 - ✅ Uses your GitHub account email (via noreply address)
 - ✅ Commits to default branch (main)
-- ✅ Must use as template, NOT fork
 - ✅ Repository must be public
 
 The randomization ensures your activity looks natural and human-like!
